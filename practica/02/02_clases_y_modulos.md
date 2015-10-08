@@ -70,7 +70,10 @@ Puedo introducir la ejecución del código de incremento de las invocaciones med
 	* defino el *nuevo* método mediante `define_method`
 * `invoked?` e `invoked`: retorno el valor asociado, claro.
 
+[Código](./codigo/02_04_main.rb)
+
 El siguiente párrafo es la conclusión de por qué mi primer approach no funcionó.
+
 ~~En principio había pensado en definir un único método que intercepte a todos aquellos que se *agreguen* mediante `count_invocations_of`. En él se incrementaría el valor del hash correspondiente al símbolo del método invocado. La cosa no era tan simple como me imaginaba. Surgió un problema: ligar todos los métodos que se quisieran monitorizar a nuestro método contador imposibilitaba saber, dentro del contador, cuál era el método que se había invocado, por lo que no servía. Cuestión, decidí agregar un método contador para cada uno que se quiere monitorizar. Esto lo haré mediante el método `define_method`.~~
 
 #### ToDo
