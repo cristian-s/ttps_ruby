@@ -1,0 +1,33 @@
+ ~  irb
+irb(main):001:0> alto_hash = {
+irb(main):002:1* "nombre" => "Cristian"
+irb(main):003:1> , "apellido" => "Sottile" }
+SyntaxError: (irb):3: syntax error, unexpected ',', expecting '}'
+, "apellido" => "Sottile" }
+ ^
+(irb):3: syntax error, unexpected =>, expecting end-of-input
+, "apellido" => "Sottile" }
+               ^
+	from /Users/cristian/.rbenv/versions/2.2.3/bin/irb:11:in `<main>'
+irb(main):004:0> alto_hash = {
+irb(main):005:1* "nombre" => "Cristian",
+irb(main):006:1* "apellido" => "Sottile"
+irb(main):007:1> }
+=> {"nombre"=>"Cristian", "apellido"=>"Sottile"}
+irb(main):008:0> alto_hash.each {|k, v| alto_hash[k] = v.upcase}
+=> {"nombre"=>"CRISTIAN", "apellido"=>"SOTTILE"}
+irb(main):009:0> alto_hash
+=> {"nombre"=>"CRISTIAN", "apellido"=>"SOTTILE"}
+irb(main):010:0> alto_hash.each {|k, v| alto_hash[k.upcase] = v.downcase}
+RuntimeError: can't add a new key into hash during iteration
+	from (irb):10:in `block in irb_binding'
+	from (irb):10:in `each'
+	from (irb):10
+	from /Users/cristian/.rbenv/versions/2.2.3/bin/irb:11:in `<main>'
+irb(main):011:0> alto_hash.merge!()
+ArgumentError: wrong number of arguments (0 for 1)
+	from (irb):11:in `merge!'
+	from (irb):11
+	from /Users/cristian/.rbenv/versions/2.2.3/bin/irb:11:in `<main>'
+irb(main):012:0> alto_hash.merge!(
+irb(main):013:1* alto_hash.collect {|k, v| }
