@@ -9,7 +9,7 @@ Bien, esto de `next` ya existe con el módulo `Enumerable` en ruby, pero funcion
 
 Se quieren obtener números pares. Definimos el `Enumerator` de forma tal que en cada iteración agregue 2 al número anterior. Queremos recorrerlo con next así que optaremos por la opción en que enviamos `:<<` al objeto parámetro.
 
-```
+```ruby
 pairs = Enumerator.new do |yielder|
 	actual = 0
 	loop do
@@ -28,7 +28,7 @@ irb(main):034:0> pairs.first(10) {|e| puts e}
 
 Supongamos que ahora queremos que, para cada número par, efectúe una cierta acción. Acá es donde necesitamos los bloques:
 
-```
+```ruby
 pairs = Enumerator.new do |yielder|
 	actual = 0
 	loop do
@@ -43,7 +43,7 @@ Así, por ejemplo, podemos decirle `each {|e| puts e}` y nos intentará imprimir
 ### Lazy something
 No conformes con tener estas estructuras infinitas, ahora veremos cómo obtener otras estructuras infinitas a partir de ellas. Implementaremos una función *lazy select* que recibirá un enumerator y un bloque como parámetros. Luego generará un enumerator en donde iterará sobre el recibido, evaluará el bloque y sólo tendrá en cuenta aquellos elementos para los cuales el bloque retornó `true`.
 
-```
+```ruby
 def lazy_select enumerator, &block
 	Enumerator.new do |yielder|
 		enumerator.each do |element|
@@ -55,7 +55,7 @@ end
 
 Se podría ubicar en un lugar más adecuado: un método perteneciente a `Enumerator`:
 
-```
+```ruby
 class Enumerator
 	def lazy_select &block
 		Enumerator.new do |yielder|
@@ -72,3 +72,7 @@ Así, tenemos enumerators que nos permiten aplicarle un `select` y no dejan de s
 ### Dudas
 1. ¿Es lo mismo `#yield` que `#<<`?
 2. ¿Tiene que ver Enumerator con el *mixin* Enumerable? ¿Se podría hacer que todos los que incluyan el *mixin* respondan a este *lazy_select*? ¿Es eso lo que en realidad hicimos arriba?
+3. 
+
+### Referencias
+[Good Mike's Blog - Lazy Enumerators](http://www.michaelharrison.ws/weblog/?p=163)
