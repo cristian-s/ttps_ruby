@@ -90,3 +90,107 @@ Se genera el alias `new_sym` para el método `sym`. Se puede redefinir `sym` y d
 
 ##### Uso de `class_eval` e `instance_eval`
 *Escribir algún día*
+
+## 5. Implementar
+> Dada la clase abstracta GenericFactory, implementar subclases que permitan crear instancias mediante el mensaje `create` en vez de `new`.
+
+```ruby
+Class GenericFactory	def self.create(**args)		new(**args)	end	def initialize(**args)		raise NotImplementedError	end
+end
+```
+
+### Preanálisis
+##### ¿Qué son esos dos * que recibe create como argumento? ¿Doble splat?
+Repasando un poco los *splat*, vemos que **cuando estamos definiendo un método** y decimos que un método será *splat*, estamos especificando que los argumentos individuales que se reciban, que pueden ser N, serán todos metidos en un array que se llamará como el nombre luego del "*". Del otro lado, **cuando estamos invocando un método**, vemos que podemos tomar un array y hacerle *splat*, `some_meth(*some_ary)`, con lo que el método estará recibiendo cada elemento de `some_ary` como un argumento individual.
+
+Ahora vamos a lo que nos interesa: ¿qué es este *doble splat*? **Es lo mismo, pero con hashes**. **Cuando *doble spleateamos* un parámetro formal**, estamos indicando que este será un *hash* que contendrá los argumentos recibidos, que deberán ser pares clave valor en forma de `key: value`. **Cuando lo hagamos con un parámetro actual**, provocaremos que el *hash* se transforme en argumentos individuales con forma de par clave valor.
+
+Cuestión, lo que se pretende con la definición de `create(**args)` es recibir como argumentos un conjunto de pares clave valor, y tratarlos como un único hash dentro del método.
+
+Fuente: [firmafon.dk](https://dev.firmafon.dk/blog/drat-ruby-has-a-double-splat/)
+
+##### Argumentos al new
+Parece que los argumentos que enviamos a `new` son enviados directamente a initialize. Sí, así es.
+
+### Planteo de la situación
+Tengo una clase abstracta que tiene definido un método `create(**args)`, el cual retorna una instancia de la clase, inicializada con los valores que le pasamos. El método `initialize(**args)` es abstracto, y será definido en las subclases. Cada una sabrá cómo debe inicializarse.
+
+Definiré dos subclases: Persona y Auto. **Persona** tendrá *nombre*, *apellido* y *dni*, y **Auto** tendrá *marca*, *modelo* y *color*. Ambas recibirán un *hash* con claves iguales a sus atributos de instancia.
+
+[Código](./codigo/02_05_main.rb)
+
+## 6. Modificación
+> Modificar el código anterior para que **GenericFactory** ahora sea un *Mixin*.
+
+[Código](./codigo/02_06_main.rb)
+
+### ToDo
+Ver patrones de diseño *Abstract Factory* y *Factory Method*, que es a lo que en realidad apunta el ejercicio.
+
+## 7. Implementar
+> Agregar el método`opposite` a **TrueClass** y **FalseClass**, ante el que deben responder el valor contrario al que son.
+
+[Código](./codigo/02_07_oppositable.rb)
+
+## 8. Analizar el script
+* constante VALUE = "global"
+* módulo A
+	* constante VALUE = "A"
+	* clase B
+		* constante VALUE = "B"
+		* método de clase value, ^VALUE
+		* método de instancia value, ^"iB"
+	* método de módulo value, ^VALUE
+* clase C
+	* clase D
+		* constante VALUE = "D"
+		* método de clase value, ^VALUE
+	* módulo E
+		* método de módulo value, ^VALUE
+	* método de clase value, ^VALUE
+* clase F, subclase de C
+	* constante VALUE = "F"
+
+### 1. ¿Qué imprimiría cada sentencia? ¿De dónde obtiene el valor?
+##### `puts A.value`
+A es un módulo. Tiene un método de módulo `#value` que retorna el valor de la constante `VALUE`, que en ese "espacio" de código es "A".
+
+##### `puts A::B.value`
+B es una clase que se encuentra definida dentro del módulo A. B tiene un método de clase `#value` que retorna el valor de la constante `VALUE`, que para B es "B".
+
+##### `puts C::D.value`
+D es una clase que está definida dentro de la clase C. Desconozco cómo acceder a clases internas a otras clases. Vamos a averiguarlo [...]. Se accede igual que con los módulos. O sea que se invocaría al método de clase `#value` de D, que retorna el valor de la constante `VALUE`, que para D es "D".
+
+##### `puts C::E.value`
+Acceso al módulo E, que es interior a C, e invoco al método de módulo `value`, que retorna el valor de `VALUE`, que para E es "global".
+
+##### `puts F.value`
+F hereda de C. El método de clase `#value` se encuentra en esa herencia. Cuando se lo invoca en F, yo creo que se ejecuta en el contexto de F, por lo que la constante `VALUE` sería "F". Probémoslo [...]. Contrariamente a lo que yo pensaba, `F.value` retornó "global". **QUÉ ONDA**
+
+### 2. ¿Qué pasaría si ejecutases las siguientes sentencias? ¿Por qué?
+##### `puts A::value`
+Se invocaría al método de módulo `value`, que retorna la constante `VALUE`, que en ese espacio es "A".
+
+Mediante `::` se accede a métodos o constantes de módulos o clases. Si empieza con mayúscula y no tiene parámetros encerrados entre paréntesis, ruby entenderá que se quiere acceder a una constante y no a un método.
+
+Fuente: [stackoverflow](http://stackoverflow.com/questions/2276905/what-does-double-colon-mean-in-ruby)
+
+##### `puts A.new.value`
+A es un módulo, no se puede instanciar. Da `undefined method 'new' for A:Module`.
+
+##### `puts B.value`
+Pienso que debería no reconocer B, ya que está definida dentro del módulo A. Veremos [...]. Efectivamente: `NameError: uninitialized constant B`.
+
+##### `puts C::D.value`
+Toma la clase D dentro de C, e invoca a su método de clase `value`, que retorna `VALUE`, que en ese scope es "D".
+
+##### `puts C.value`
+Invoca al método de clase `value` de C, que retorna `VALUE`, que en ese scope es "global".
+
+##### `puts F.superclass.value`
+Lo mismo que C.value, dado que el objeto que retorna `F.superclass` es C.
+
+### Aprendizaje
+* `self` dentro de un módulo pero fuera de un método de instancia del módulo, se refiere al módulo. O sea, la definición de un método en la que se antepone un `self`, definirá un método de instancia del módulo y no de la clase que incluya al módulo.
+* Cómo acceder a una clase interna a otra clase. **Curioso** que se haga de la misma forma que en los módulos, debe haber alguna relación loca entre `Module` y `Class`.
+* Tanto `::` como `.` permiten invocar a métodos de un módulo de una clase o un módulo. Además, `::` permite acceder a clases y constantes internas de clases o módulos.
