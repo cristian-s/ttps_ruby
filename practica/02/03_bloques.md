@@ -1,5 +1,5 @@
 # Bloques
-## Implementar
+## 1. Implementar
 > Un método que reciba un bloque como parámetro, lo invoque y retorne si el valor de retorno del bloque fue `nil`.
 
 ### Preanálisis
