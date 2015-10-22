@@ -1,237 +1,72 @@
-## Ruby
+## Git
 
-### 1. Formas de instanciar objetos de estos tipos básicos
-
-##### Array
+### 1. Ejecutá git o git help en la línea de comandos y mirá los subcomandos que tenés disponibles.
 ```
-Array.new
-
-[ x, y, z ]
-
-x.to_a
-x.to_ary
-```
-
-##### Diccionario/Hash
-```
-Hash.new
-
-{ "nombre" => "Cristian",
-  "carrera" => "APU" }
-  
-{ :nombre => "Cristian",
-  :carrera => "APU" }
-
-{ nombre: "Cristian",
-  carrera: "APU" }
-```
-
-##### String
-```
-String.new("String")
-
-"String"
-
-# Desde diferentes objetos
-to_s
+   add        Add file contents to the index
+   bisect     Find by binary search the change that introduced a bug
+   branch     List, create, or delete branches
+   checkout   Checkout a branch or paths to the working tree
+   clone      Clone a repository into a new directory
+   commit     Record changes to the repository
+   diff       Show changes between commits, commit and working tree, etc
+   fetch      Download objects and refs from another repository
+   grep       Print lines matching a pattern
+   init       Create an empty Git repository or reinitialize an existing one
+   log        Show commit logs
+   merge      Join two or more development histories together
+   mv         Move or rename a file, a directory, or a symlink
+   pull       Fetch from and integrate with another repository or a local branch
+   push       Update remote refs along with associated objects
+   rebase     Forward-port local commits to the updated upstream head
+   reset      Reset current HEAD to the specified state
+   rm         Remove files from the working tree and from the index
+   show       Show various types of objects
+   status     Show the working tree status
+   tag        Create, list, delete or verify a tag object signed with GPG
 ```
 
-##### Symbol
-```
-# Aparentemente no se instancian, directamente se setean
-# De hecho new no es un método válido para Symbol
-# Lo que empiece con : será un Symbol
-:x creará el Symbol :x
+### 2. Ejecutá el comando git help help. ¿Cuál fue el resultado?
+Se abrieron las man pages de git.
 
-# Desde diferentes objetos
-to_sym
-```
+### 3. Utilizá el subcomando help para conocer qué opción se puede pasar al subcomando add para que ignore errores al agregar archivos.
+`git add --ignore-errors`
 
-### 2. 
-`'TTPS Ruby'.object_id == 'TTPS Ruby'.object_id` devuelve false, porque los strings, si bien tienen el mismo contenido, son creados mediante un literal y generan cada uno un objeto distinto.
+### 4. ¿Cuáles son los estados posibles en Git para un archivo? ¿Qué significa cada uno?
+- Commited: está en el repositorio.
+- Staged: está listo para ser confirmado.
+- Modified: esta modificado, aún en el working directory.
 
-### 3.
-```
-def reemplazar string
-	string.gsub("{", "do\n").gsub("}", "\nend")
-end
-```
+### 5. Cloná el repositorio de materiales de la materia. Una vez finalizado, ¿cuál es el hash del último commit que hay en el repositorio que clonaste? Tip: git log.
+d8421af65d6409ad27e460dc5e3c834e8c49ee1e
 
-### 4. Escribir una función, dados los siguientes requerimientos
-Convertir a palabras la hora actual, dividiendo en los siguientes rangos los minutos:
-* si el minuto está entre 0 y 10, debe decir "en punto",
-* si el minuto está entre 11 y 20, debe decir "y cuarto",
-* si el minuto está entre 21 y 34, debe decir "y media",
-* si el minuto está entre 35 y 44, debe decir "menos veinticinco" (de la hora siguiente), si el minuto está entre 45 y 55, debe decir "menos cuarto" (de la hora siguiente),
-* si el minuto está entre 56 y 59, debe decir "casi las" (y la hora siguiente)
+### 6. ¿Para qué se utilizan los siguientes subcomandos?
+- init: inicializar un repositorio vacío en un directorio, o reinicializar uno ya existente.
+- status: ver los cambios realizados sobre los archivos en el working tree.
+- log: ver los logs de los commits (en el branch actual)
+- fetch: obtener las historias de desarollo que aún no se "tengan" desde un repositorio remoto. O sea, obtener los cambios realizados en este repositorio remoto.
+- merge: **PROFUNDIZAR**
+- pull: fetch & merge.
+- commit: agregar al repositorio los cambios preparados en el stage.
+- stash: agrega el estado actual del working directory junto con los cambios stageados a la sección *stash*, dejando el working directory limpio. Esto se utiliza cuando se quiere cambiar de branch o de lo que sea y no se quiere commitear aún ni perder los cambios.
+- push: enviar a un repositorio remoto los cambios realizados en el local.
+- rm: dejar de trackear un archivo.
+- checkout: tomar una cierta versión de un archivo o del proyecto y ponerla en el working directory.
 
-```
-def en_palabras time
-	case time.min
-		when (0..10) then
-			"Son las #{time.hour} en punto"
-		when (11..20) then
-			"Son las #{time.hour} y cuarto"
-		when (21..34) then
-			"Son las #{time.hour} y media" 
-		when (35..44) then
-			"Son las #{(time.hour + 1) % 24} menos veinticinco" 
-		when (45..55) then
-			"Son las #{(time.hour + 1) % 24} menos cuarto" 
-		when (56..59) then
-			"Son casi las #{(time.hour + 1) % 24}"
-	end
-end
-```
+### 8. Utilizá el subcomando log para ver los commits que se han hecho en el repositorio, tomá cualquiera de ellos, copiá su hash y luego utilizá el subcomando checkout para viajar en el tiempo (apuntar tu copia local) a ese commit. ¿Qué commits muestra ahora git log? ¿Qué ocurrió con los commits que no aparecen? ¿Qué dice el subcomando status?
+`git log` ahora sólo muestra los commits anteriores al commit en el que estoy parado. Esto ocurre porque, desde el punto de vista de este commit, los commits siguientes no ocurrieron. El subcomando status muestra lo mismo que antes de cambiar de commit, habría que ver bien **POR QUÉ**.
 
-### 5. Escribir una función, dados los siguientes requerimientos
-Recibir como parámetro dos string y retornar la cantidad de veces que aparece el segundo string en el primero, sin importar mayúsculas y minúsculas.
+### 10. Creá un directorio vacío en el raiz del proyecto clonado. ¿En qué estado aparece en el git status? ¿Por qué?
+No aparece nada en el git status. Será porque los directorios vacíos no "ensucian" el working directory.
 
-```
-def contar (universe, target)
-	universe.scan(/#{target}/i).size
-end
-```
+### 11. Creá un archivo vacío dentro del directorio que creaste en el ejercicio anterior y volvé a ejecutar el subcomando status. ¿Qué ocurre ahora? ¿Por qué?
+Ahora sí aparece. Supongo que porque el directorio ya no está vacío.
 
-### 6. Modificá la función anterior para que sólo considere como aparición del segundo string cuando se trate de palabras completas.
+### 12. Utilizá el subcomando clean para eliminar los archivos no versionados (untracked) y luego ejecutá git status. ¿Qué información muestra ahora?
+Los archivos "no versionados" son los que no están *stageados*. `clean` elimina todos los cambios realizados sobre estos archivos, pero no toca nada de lo que ya está stageado.
 
-```
-def contar_palabras universe, target
-	universe.scan(/\b#{target}\b/i).size
-end
-```
-
-### 7. Implementar:
-Dada una cadena cualquiera, y utilizando los métodos que provee la clase String, realizá las siguientes operaciones sobre el string:
-
-1. Imprimilo con sus caracteres en orden inverso.2. Eliminá los espacios en blanco que contenga.3. Convertí cada uno de sus caracteres por su correspondiente valor ASCII.4. Cambiá las vocales por números (a por 4, e por 3, i por 1, o por 0, u por 6).
-
-```
-def perform_operations str
-	puts str.reverse
-	
-	puts str.tr " ", ""
-	
-	puts str.bytes.inject("") {
-		|result, each|
-		result + each.to_s
-	}
-	
-	str.bytes.join
-	
-	puts str.gsub /[aeiou]/, /[aA]/ => 4, "e" => 3, "E" => 3, "i" => 1, "I" => 1, "o" => 0, "O" => 0, "u" => 6, "U" => 6
-end
-```
-
-##### Adicional
-Uso interesante del `Enumerable#inject`: aprovechando que le envía al siguiente elemento de la iteración, el objeto que resulta de su operatoria, se puede usar para, por ejemplo, generar un *Hash* de la siguiente forma:
-
-```ruby
-	vowels_to_numbers = {
-		"a" => 4,
-		"e" => 3,
-		"i" => 1,
-		"o" => 0,
-		"u" => 6,
-	}
-	
-	vowels_to_numbers.inject({}) do |new_hash, (key, value)|
-		new_hash[key] = new_hash[key.upcase] = value
-		new_hash
-	end
-```
-
-Lo que hacemos es comenzar con un *Hash* vacío, en cada "iteración" agregarle los valores correspondientes (en este caso, dos pares clave-valor para cada par del hash "viejo"), y pasarle el resultado a la siguiente. Así, al finalizar el método, tenemos una estructura generada automáticamente mediante la agregación de elementos a partir de los elementos originales.
-
-### 8. ¿Qué hace el siguiente código?
-```
-[:upcase, :downcase, :capitalize, :swapcase].map do |meth|      "TTPS Opción Ruby".send(meth)end
-```
-La función `map` cumple la misma función que `collect`: para cada elemento de la colección, ejecuta el bloque recibido, enviándoselo como parámetro, y agrega el objeto resultante a una colección que luego retorna. La función `send` invoca al método correspondiente al símbolo enviado como primer argumento. Cuestión, en este caso se retornará el string `"TTPS Opción Ruby"` cuatro veces, con ligeras modificaciones:
-
-- `"TTPS OPCION RUBY"`
-- `"ttps opcion ruby"`
-- `"Ttps opcion ruby"`
-- `"ttps oPCION rUBY"`
-
-### 9.
-Escribí una función que dado un arreglo que contenga varios string cualesquiera, retorne un nuevo arreglo donde cada elemento es la longitud del string que se encuentra en la misma posición del arreglo recibido como parámetro.
-
-```
-def longitud strings_ary
-	strings_ary.collect {|s| s.length}
-end
-```
-
-### 10.
-```
-def a_ul hash
-	"<ul>\
-	#{hash.collect {|key, value| "<li>#{key}: #{value}</li>"}.join}\
-	</ul>"
-end
-```
-
-### 11.
-`./01_extras/11.rb`
-
-### 12.
-`./01_extras/12.rb`
-
-### 15.
-##### Métodos
-Provee métodos para pedir todos los métodos, así como métodos para consultar por un determinado método.
-
-`Object#methods`, `Object#public_methods`, `Object#protected_methods`, `Object#private_methods`
-
-`Object#method`, `Object#public_method`, `Object#respond_to`
-
-Para conocer los métodos de clase, se le piden los métodos a la clase, y para conocer los métodos de instancia, se le piden los métodos a una instancia de la clase.
-
-##### Atributos
-Provee un método `Object#instance_variables` que en este momento no me funciona :(
-
-##### Superclases
-La superclase de una clase se puede obtener mediante el método `Class#superclass`.
-
-### 16. Escribí una función que encuentre la suma de todos los números naturales múltiplos de 3 ó 5 menores que un número tope que reciba como parámetro.
-Arranqué queriendo hacer un inject con un if simple adentro, algo así:
-
-```
-def suma_rara tope
-	(1..tope).to_a.inject(0) do |sum, element|
-		if (element % 3).zero? || (element % 5).zero?
-			puts sum
-		end
-	end
-end
-```
-
-Pero resulta que cuando lo ejecutaba me daba que `nil` no entiende el mensaje `+`. Googleando encontré [esto](http://stackoverflow.com/questions/10722913/ruby-inject-with-conditional-in-block), en donde explican que inject, en cada iteración, pasa al siguiente bloque lo que retornó el anterior; cuando el if daba false, retornaba `nil`, y luego se pasaba al siguiente bloque `nil` como `sum`, provocando el problemín. 
-
-Cuestión, el código queda así:
-
-```
-def suma_rara tope
-	(1..tope).to_a.inject(0) do |sum, element| 
-		(element % 3).zero? || (element % 5).zero? ? sum + element : sum
-	end
-end
-```
-
-### 17.
-`./extras_01/17.rb`
-
-Profundización sobre los Enumerators en [*Lazy enumerables*](../teoria/notas/lazy_enumerables.md).
-
-### 18. 😦
-`./extras_01/18.rb`
-
-## Dudas
-
-1. ¿Qué onda que each_char retorna un *enumerator* si no se le pasa un bloque? ¿Qué haría con el *enumerator*?
-2. ¿Por qué no le pude pasar un objeto Hash a String#gsub?
-3. ¿Cómo podría mejorar el hash que le paso? Evitando repetir a y A, por ejemplo.
-
-## ToDo
-1. Agregar las mayúsculas al hash vowels_to_numbers.
+### Conclusiones
+- Los archivos **trackeados** son aquellos que están **stageados**. El comando `clean` elimina los cambios no *stageados*.
+- `checkout` modifica el puntero HEAD. El puntero HEAD es el indicador de qué es lo que hay en el *working directory* (o qué es lo que habría si estuviera limpio).
+- `stash` sirve para guardar en una pila el estado actual del working directory, permitiendo, por ejemplo, cambiar de branch sin commitear ni perder los cambios.
+- `git help X` provee ayuda sobre el comando X.
+- Los directorios vacíos no "ensucian" el *working tree*.

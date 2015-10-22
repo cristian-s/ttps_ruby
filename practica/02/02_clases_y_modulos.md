@@ -57,6 +57,7 @@ end
 > * `invoked?(symbol)`: retorna el valor booleano correspondiente.
 > * `invoked(symbol)`: retorna la cantidad de veces que fue invocado el método.
 
+### Implementación sólo usando métodos de instancia
 ###### ¿Qué voy a necesitar?
 * Contar la cantidad de llamados que hubo para un símbolo dado. Voy a usar un Hash.
 * Ejecutar nuestro código de actualización del Hash cada vez que se invoca a uno de los métodos monitoreados.
@@ -84,12 +85,44 @@ El siguiente párrafo es la conclusión de por qué mi primer approach no funcio
 1. ¿Por qué `self.class.define_method` no me deja por ser método privado, y `self.class.send(:define_method)` sí me deja?
 2. ¿Por qué carajo `__countable_invocations_amounts` es nil si no pongo la línea `@__countable_invocations_amounts ||= {}` en `count_invocations_of`?
 
+### Implementación usando métodos de instancia y de clase
+##### Análisis
+En la implementación anterior, todo sucedía en la instancia, por lo que no había que detenerse a pensar si, en ciertos momentos, uno estaba parado en la instancia o en la clase. Con el uso de métodos de clase, sí deberemos hacerlo.
+
+##### ¿Qué quiero hacer?
+* Indicarle a una clase que quiero que cada instancia observe la invocación a ciertos métodos. Estas *indicaciones* se hacen 
+en runtime sobre la clase.
+* Cuando se le indica que debe observar un método, la clase creará un `alias_method` y redefinirá el método original, agregando la contabilización de la invocación al método.
+* La contabilización se llevará a cabo sobre una variable de instancia.
+* La variable debe ser creada en la instancia. En los métodos modificados se insertará la creación si no existiera.
+* Las instancias serán las encargadas de contabilizar las invocaciones, y esta contabilización será propia, sin relación con la de las demás instancias.
+
+##### Preverificaciones sobre el hash
+* Cuando se invoca a `invoked` o `invoked?`, se debe:
+	* Verificar la existencia del hash, creándolo si no existiera.
+	* Verificar la existencia del `sym` en el hash.
+		* Si no existe, se debe verificar si es un método que debe ser controlado.
+			* Si no debe ser controlado, se lanza una excepción de "Método no observado".
+			* Si debe ser controlado, se inicializa con valor 0.
+		* Si existe, se retorna el valor entero o booleano, según corresponda.
+* El método *redefinido* debe verificar la existencia tanto del hash como del `sym` en el hash.
+
+Para proveer la verificación de si un método debe observarse o no, agrego un método de clase `#under_observation?(sym)`.
+
+##### ¿Cómo lo voy a hacer?
+* `count_invocations_of` será un método de clase que modificará un atributo de clase en donde se almacena la *lista* de los métodos a observar.
+
+##### Dudas
+1. ¿Por qué no funcionó el `attr_accessor`?
+2. ¿Quedó muy caverna?
+3. ¿Me remanijeé demás?
+
 #### Nuevos conocimientos
 ##### Uso de `alias_method(new_sym, sym)`
 Se genera el alias `new_sym` para el método `sym`. Se puede redefinir `sym` y desde él invocar al *viejo* `sym` mediante `new_sym`.
 
 ##### Uso de `class_eval` e `instance_eval`
-*Escribir algún día*
+[web.stanford.edu](http://web.stanford.edu/~ouster/cgi-bin/cs142-winter15/classEval.php)
 
 ## 5. Implementar
 > Dada la clase abstracta GenericFactory, implementar subclases que permitan crear instancias mediante el mensaje `create` en vez de `new`.
