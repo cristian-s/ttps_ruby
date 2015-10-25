@@ -1,25 +1,11 @@
 require_relative "02_04_Countable"
 
-class CristianSottile
-	include Countable
+require_relative "02_04_Platense"
 
-	def say_country
-		puts "My country is Argentina"
-	end
+Platense.count_invocations_of :say_country
+Platense.count_invocations_of :say_state
 
-	def say_state
-		puts "My state is Buenos Aires"
-	end
-
-	def say_city
-		puts "My city is La Plata"
-	end
-
-	count_invocations_of :say_country
-	count_invocations_of :say_state
-end
-
-me = CristianSottile.new
+me = Platense.new
 
 puts ":say_country invoked? #{me.invoked? :say_country}" # Should put false
 puts ":say_state invoked? #{me.invoked? :say_state}" # Should put false
