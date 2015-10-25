@@ -1,7 +1,7 @@
 # Excepciones
 Cuando tenemos cierto código que sabemos que, dado un conjunto de condiciones, puede producir errores, o que queremos específicamente que produzca un error si se cumplen una serie de requisitos, podemos hacer uso de las excepciones.
 
-Las excepciones nos permiten especificar el código *peligroso* y qué hacer en caso se produzcan (o se deban producir) errores.
+Las excepciones nos permiten especificar el código *peligroso* y qué hacer en caso de que se produzcan (o se deban producir) errores.
 
 ##### `begin`
 Indica el comienzo del código *peligroso*.
