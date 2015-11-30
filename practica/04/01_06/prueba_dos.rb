@@ -1,3 +1,3 @@
-require "Bundler"
+require "bundler"
 Bundler.require
 puts "Chau!", :red
