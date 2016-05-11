@@ -13,3 +13,11 @@ def rot str, n
 end
 
 puts rot("¡Bienvenidos a la cursada 2015 de TTPS Opción Ruby!", 14)
+
+
+# Other implementation
+def rot2(str, delta=1)
+        str.split("").map {|e| [e.ord + delta].pack 'U'}
+end
+
+puts rot2("¡Bienvenidos a la cursada 2015 de TTPS Opción Ruby!", 14)
